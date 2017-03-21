@@ -5,7 +5,7 @@ class UsersController < ApplicationController
 
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: FILL_IN).paginate(page: params[:page])
   end
 
 
@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   end
 
    def show
-    @user = User.find(params[:id])
+     redirect_to root_url and return unless FILL_IN
   end
 
 
@@ -27,9 +27,9 @@ class UsersController < ApplicationController
     #then use user_params here then add a private method below
     @user = User.new(user_params)    # Not the final implementation!
     if @user.save
-      log_in @user
-      flash[:success] = "Welcome to the Blog App!"
-      redirect_to @user
+      @user.send_activation_email
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new'
     end
